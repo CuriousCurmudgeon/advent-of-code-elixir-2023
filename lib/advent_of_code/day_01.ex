@@ -36,13 +36,13 @@ defmodule AdventOfCode.Day01 do
     |> calibrate()
   end
 
-  defp convert_to_digits(input) do
-    case Regex.run(@letters_regex, input, offset: 0, return: :index) do
+  defp convert_to_digits(input, offset \\ 0) do
+    case Regex.run(@letters_regex, input, offset: offset, return: :index) do
       [{index, length}] ->
         match = String.slice(input, index, length)
         replacement = Map.get(@replace_map, match)
         {a, b} = String.split_at(input, index + 1)
-        convert_to_digits(a <> replacement <> b)
+        convert_to_digits(a <> replacement <> b, index + 1)
 
       nil ->
         input
