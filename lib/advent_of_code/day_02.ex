@@ -3,8 +3,9 @@ defmodule AdventOfCode.Day02 do
     input
     |> String.split("\n")
     |> Enum.map(&parse_game/1)
-    |> Enum.filter(fn x -> x end)
-    |> dbg()
+    |> Enum.filter(&valid_game?/1)
+    |> Enum.map(fn {game_id, _} -> game_id end)
+    |> Enum.sum()
   end
 
   def part2(_args) do
@@ -26,7 +27,7 @@ defmodule AdventOfCode.Day02 do
 
   defp parse_colors(color_string_list) do
     color_string_list
-    |> Enum.reduce(%{}, fn x, map ->
+    |> Enum.reduce(%{red: 0, green: 0, blue: 0}, fn x, map ->
       {color, count} = parse_color(x)
       Map.put(map, color, count)
     end)
@@ -35,5 +36,12 @@ defmodule AdventOfCode.Day02 do
   defp parse_color(color_string) do
     [count_string, color] = String.split(color_string)
     {String.to_atom(color), Integer.parse(count_string) |> elem(0)}
+  end
+
+  defp valid_game?(nil), do: false
+
+  defp valid_game?({_, handfuls}) do
+    handfuls
+    |> Enum.all?(fn x -> x.red <= 12 and x.green <= 13 and x.blue <= 14 end)
   end
 end
