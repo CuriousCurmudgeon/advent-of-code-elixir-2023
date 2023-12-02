@@ -18,7 +18,7 @@ defmodule AdventOfCode.Day02 do
 
     handfuls =
       handful_strings
-      |> Enum.map(fn h -> Regex.scan(~r/\d\s[a-z]+/, h) |> List.flatten() end)
+      |> Enum.map(fn h -> Regex.scan(~r/\d+\s[a-z]+/, h) |> List.flatten() end)
       |> Enum.map(&parse_colors/1)
 
     {game_id, handfuls}
