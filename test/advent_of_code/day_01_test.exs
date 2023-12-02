@@ -33,7 +33,7 @@ defmodule AdventOfCode.Day01Test do
     {"eightwothree", 83},
     {"abcone2threexyz", 13},
     {"xtwone3four", 24},
-    {"4nineeightseven", 42},
+    {"4nineeightseven2", 42},
     {"zoneight234", 14},
     {"7pqrstsixteen", 76}
   ]
