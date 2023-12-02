@@ -1,17 +1,26 @@
 defmodule AdventOfCode.Day02 do
   def part1(input) do
     input
-    |> String.split("\n")
-    |> Enum.map(&parse_game/1)
+    |> parse_games()
     |> Enum.filter(&valid_game?/1)
     |> Enum.map(fn {game_id, _} -> game_id end)
     |> Enum.sum()
   end
 
-  def part2(_args) do
+  def part2(input) do
+    input
+    |> parse_games()
+    |> Enum.map(&min_cubes/1)
+    |> Enum.map(fn min_cubes -> Map.values(min_cubes) |> Enum.reduce(fn x, acc -> x * acc end) end)
+    |> Enum.sum()
   end
 
-  defp parse_game(""), do: nil
+  defp parse_games(input) do
+    input
+    |> String.trim()
+    |> String.split("\n")
+    |> Enum.map(&parse_game/1)
+  end
 
   defp parse_game(input) do
     [game_string | handful_strings] = String.split(input, [":", ";"])
@@ -38,10 +47,19 @@ defmodule AdventOfCode.Day02 do
     {String.to_atom(color), Integer.parse(count_string) |> elem(0)}
   end
 
-  defp valid_game?(nil), do: false
-
   defp valid_game?({_, handfuls}) do
     handfuls
     |> Enum.all?(fn x -> x.red <= 12 and x.green <= 13 and x.blue <= 14 end)
+  end
+
+  defp min_cubes({_, handfuls}) do
+    handfuls
+    |> Enum.reduce(fn x, map ->
+      %{
+        red: Kernel.max(x.red, map.red),
+        green: Kernel.max(x.green, map.green),
+        blue: Kernel.max(x.blue, map.blue)
+      }
+    end)
   end
 end
