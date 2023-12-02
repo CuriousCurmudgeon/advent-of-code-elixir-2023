@@ -34,6 +34,6 @@ defmodule AdventOfCode.Day02 do
 
   defp parse_color(color_string) do
     [count_string, color] = String.split(color_string)
-    {color, Integer.parse(count_string) |> elem(0)}
+    {String.to_atom(color), Integer.parse(count_string) |> elem(0)}
   end
 end
