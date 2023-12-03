@@ -50,9 +50,10 @@ defmodule AdventOfCode.Day03 do
 
     digits_map =
       digits
-      |> Enum.reduce(%{}, fn {digit, {line, index}}, acc ->
+      |> Enum.map(fn {x, y} -> {x, y, System.unique_integer()} end)
+      |> Enum.reduce(%{}, fn {digit, {line, index}, u}, acc ->
         index..(index + num_length(digit) - 1)
-        |> Enum.reduce(%{}, fn i, a -> Map.put(a, {line, i}, digit) end)
+        |> Enum.reduce(%{}, fn i, a -> Map.put(a, {line, i}, {digit, u}) end)
         |> Map.merge(acc)
       end)
 
@@ -80,14 +81,14 @@ defmodule AdventOfCode.Day03 do
       |> Enum.reduce(MapSet.new(), fn position, acc ->
         case Map.get(digits_map, position) do
           nil -> acc
-          digit -> MapSet.put(acc, digit)
+          match -> MapSet.put(acc, match)
         end
       end)
 
     # If there were two adjacent numbers, get the gear ratio.
     # Otherwise return 0
     case MapSet.size(gear_digits) do
-      2 -> Enum.reduce(gear_digits, fn x, acc -> x * acc end)
+      2 -> Enum.reduce(gear_digits, 1, fn {x, _}, acc -> x * acc end)
       _ -> 0
     end
   end
