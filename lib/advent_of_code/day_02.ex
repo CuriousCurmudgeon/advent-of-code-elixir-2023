@@ -1,4 +1,9 @@
 defmodule AdventOfCode.Day02 do
+  @bag_contents %{red: 12, green: 13, blue: 14}
+
+  # Matches strings like "20 red"
+  @color_regex ~r/\d+\s[a-z]+/
+
   def part1(input) do
     input
     |> parse_games()
@@ -28,7 +33,7 @@ defmodule AdventOfCode.Day02 do
 
     handfuls =
       handful_strings
-      |> Enum.map(fn h -> Regex.scan(~r/\d+\s[a-z]+/, h) |> List.flatten() end)
+      |> Enum.map(fn h -> Regex.scan(@color_regex, h) |> List.flatten() end)
       |> Enum.map(&parse_colors/1)
 
     {game_id, handfuls}
@@ -49,7 +54,10 @@ defmodule AdventOfCode.Day02 do
 
   defp valid_game?({_, handfuls}) do
     handfuls
-    |> Enum.all?(fn x -> x.red <= 12 and x.green <= 13 and x.blue <= 14 end)
+    |> Enum.all?(fn x ->
+      x.red <= @bag_contents.red and x.green <= @bag_contents.green and
+        x.blue <= @bag_contents.blue
+    end)
   end
 
   defp min_cubes({_, handfuls}) do
