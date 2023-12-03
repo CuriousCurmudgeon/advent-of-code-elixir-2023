@@ -14,7 +14,7 @@ defmodule AdventOfCode.Day03 do
     symbols_mapset = MapSet.new(symbols)
 
     digits
-    |> Enum.filter(&is_part_number(&1, symbols_mapset))
+    |> Enum.filter(&is_part_number?(&1, symbols_mapset))
     |> Enum.map(fn {num, _} -> num end)
     |> Enum.sum()
   end
@@ -29,7 +29,7 @@ defmodule AdventOfCode.Day03 do
     |> Enum.map(fn {start, _} -> {index, start} end)
   end
 
-  defp is_part_number({num, {line, index}}, symbols_mapset) do
+  defp is_part_number?({num, {line, index}}, symbols_mapset) do
     num_length = num_length(num)
 
     (line - 1)..(line + 1)
@@ -55,6 +55,10 @@ defmodule AdventOfCode.Day03 do
         |> Enum.reduce(%{}, fn i, a -> Map.put(a, {line, i}, digit) end)
         |> Map.merge(acc)
       end)
+
+    stars
+    |> Enum.map(&to_gear_ratio(&1, digits_map))
+    |> Enum.sum()
   end
 
   defp parse_part2_line({line, index}) do
@@ -67,7 +71,25 @@ defmodule AdventOfCode.Day03 do
     |> Enum.map(fn {start, _} -> {index, start} end)
   end
 
-  defp is_gear({num, {line, index}}, gears_mapset) do
+  defp to_gear_ratio({line, index}, digits_map) do
+    # Get a count of the number of adjacent numbers
+    gear_digits =
+      for x <- (line - 1)..(line + 1), y <- (index - 1)..(index + 1), into: [] do
+        {x, y}
+      end
+      |> Enum.reduce(MapSet.new(), fn position, acc ->
+        case Map.get(digits_map, position) do
+          nil -> acc
+          digit -> MapSet.put(acc, digit)
+        end
+      end)
+
+    # If there were two adjacent numbers, get the gear ratio.
+    # Otherwise return 0
+    case MapSet.size(gear_digits) do
+      2 -> Enum.reduce(gear_digits, fn x, acc -> x * acc end)
+      _ -> 0
+    end
   end
 
   ##########
