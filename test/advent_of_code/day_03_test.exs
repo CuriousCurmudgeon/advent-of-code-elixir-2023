@@ -17,8 +17,7 @@ defmodule AdventOfCode.Day03Test do
     .664.598..
     """
 
-    result =
-      assert 4361 == part1(input)
+    assert 4361 == part1(input)
   end
 
   @tag :skip
