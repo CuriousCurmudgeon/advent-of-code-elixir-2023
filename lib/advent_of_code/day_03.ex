@@ -43,21 +43,13 @@ defmodule AdventOfCode.Day03 do
 
   defp is_part_number({num, {line, index}}, symbols_mapset) do
     num_length = num |> Integer.digits() |> length()
-    # Check on line above at all character positions from index - 1 to index + 1
-    symbol_above =
-      (index - 1)..(index + num_length)
-      |> Enum.any?(fn i -> MapSet.member?(symbols_mapset, {line - 1, i}) end)
 
-    # Check index - 1 and index + 1 on current line
-    symbol_next_to =
-      MapSet.member?(symbols_mapset, {line, index - 1}) ||
-        MapSet.member?(symbols_mapset, {line, index + num_length})
+    (line - 1)..(line + 1)
+    |> Enum.any?(&line_matches(&1, index, num_length, symbols_mapset))
+  end
 
-    # Check on line above at all character positions from index - 1 to index + 1
-    symbol_below =
-      (index - 1)..(index + num_length)
-      |> Enum.any?(fn i -> MapSet.member?(symbols_mapset, {line + 1, i}) end)
-
-    symbol_above or symbol_next_to or symbol_below
+  defp line_matches(line, index, num_length, symbols_mapset) do
+    (index - 1)..(index + num_length)
+    |> Enum.any?(fn i -> MapSet.member?(symbols_mapset, {line, i}) end)
   end
 end
