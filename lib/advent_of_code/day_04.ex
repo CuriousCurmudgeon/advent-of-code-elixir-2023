@@ -9,12 +9,12 @@ defmodule AdventOfCode.Day04 do
       [_, numbers] = String.split(x, ":")
       numbers
     end)
-    |> Enum.map(&count_winners/1)
+    |> Enum.map(&count_matches/1)
     |> Enum.filter(fn x -> x > 0 end)
     |> Enum.reduce(0, fn x, acc -> :math.pow(2, x - 1) + acc end)
   end
 
-  defp count_winners(card) do
+  defp count_matches(card) do
     [winners, mine] =
       card
       |> String.split("|")
@@ -34,8 +34,6 @@ defmodule AdventOfCode.Day04 do
       |> prep_input()
       |> to_map()
 
-    # Now process a line. Take the number of matching numbers, look up the game in
-    # the map, and update the number of copies of that card in the tuple by
     count_cards(1, cards, 0)
   end
 
@@ -49,15 +47,31 @@ defmodule AdventOfCode.Day04 do
     end)
   end
 
-  defp count_cards(i, cards, total) when map_size(cards) == 0 do
+  defp count_cards(_, cards, total) when map_size(cards) == 0 do
     total
   end
 
   defp count_cards(i, cards, total) do
-    Map.get(cards, i)
-    |> elem(1)
-    |> count_winners()
-    |> dbg()
+    {count, card} = Map.get(cards, i)
+
+    updated_cards =
+      case count_matches(card) do
+        0 ->
+          # No matches, so no cards to add
+          cards
+
+        match_count ->
+          # Add to the card count for the next match_count cards coming up
+          # Increment by the count of the current cards.
+          (i + 1)..(i + match_count)
+          |> Enum.reduce(cards, fn card_id, acc -> increment_card_count(acc, card_id, count) end)
+      end
+
+    count_cards(i + 1, Map.delete(updated_cards, i), total + count)
+  end
+
+  defp increment_card_count(cards, card_id, inc) do
+    Map.update!(cards, card_id, fn {count, numbers} -> {count + inc, numbers} end)
   end
 
   ##########
