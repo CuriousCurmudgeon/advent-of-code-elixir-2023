@@ -1,18 +1,25 @@
 defmodule AdventOfCode.Day05 do
   def part1(input) do
-    input
-    |> String.trim()
-    |> String.split("\n")
-    |> Enum.map(&parse_line/1)
+    [seeds | map_lines] =
+      input
+      |> String.trim()
+      |> String.split("\n")
+      |> Enum.map(&parse_line/1)
+      |> Enum.filter(& &1)
 
-    # Parse the seeds line
-    # Parse each section. Delimiter is an empty line. Name of the new section is irrelevant
+    map_groups =
+      map_lines
+      |> Enum.chunk_by(fn x -> x == :map end)
+      |> Enum.drop_every(2)
+      |> dbg()
+
+    {seeds, map_groups}
   end
 
   def parse_line(line) do
     case String.split(line, ~r/[: ]/) do
       ["seeds", "" | numbers] ->
-        {:seeds, Enum.map(numbers, &String.to_integer/1)}
+        Enum.map(numbers, &String.to_integer/1)
 
       [""] ->
         nil
