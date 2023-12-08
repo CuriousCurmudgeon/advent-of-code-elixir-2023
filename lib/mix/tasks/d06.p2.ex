@@ -5,7 +5,10 @@ defmodule Mix.Tasks.D06.P2 do
 
   @shortdoc "Day 06 Part 2"
   def run(args) do
-    input = nil
+    input = """
+    Time:        62     64     91     90
+    Distance:   553   1010   1473   1074
+    """
 
     if Enum.member?(args, "-b"),
       do: Benchee.run(%{part_2: fn -> input |> part2() end}),
