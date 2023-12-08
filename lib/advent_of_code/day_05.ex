@@ -35,7 +35,19 @@ defmodule AdventOfCode.Day05 do
   end
 
   def find_location(seed, mappings) do
-    seed
+    mappings
+    |> Enum.reduce(seed, fn mapping, cur_dest ->
+      get_destination_number(mapping, cur_dest)
+    end)
+  end
+
+  def get_destination_number(mapping, seed) do
+    case Enum.find(mapping, fn {_dest, source, range} ->
+           seed >= source and seed < source + range
+         end) do
+      nil -> seed
+      {dest, source, _range} -> seed + (dest - source)
+    end
   end
 
   def part2(_args) do
