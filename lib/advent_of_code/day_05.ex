@@ -7,13 +7,14 @@ defmodule AdventOfCode.Day05 do
       |> Enum.map(&parse_line/1)
       |> Enum.filter(& &1)
 
-    map_groups =
+    mappings =
       map_lines
       |> Enum.chunk_by(fn x -> x == :map end)
       |> Enum.drop_every(2)
-      |> dbg()
 
-    {seeds, map_groups}
+    seeds
+    |> Enum.map(&find_location(&1, mappings))
+    |> Enum.min()
   end
 
   def parse_line(line) do
@@ -31,6 +32,10 @@ defmodule AdventOfCode.Day05 do
         [dest, source, range] = Enum.map(mapping, &String.to_integer/1)
         {dest, source, range}
     end
+  end
+
+  def find_location(seed, mappings) do
+    seed
   end
 
   def part2(_args) do
